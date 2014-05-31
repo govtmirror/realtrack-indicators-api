@@ -1,7 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import TextField
-from wtforms.validators import Required
+from wtforms import SelectField
 
 class IndicatorForm(Form):
-    country = TextField('country',validators=[Required()])
-    sector = TextField('sector',validators=[Required()])
+    country = SelectField('country')
+    sector = SelectField('sector')

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h3>Please enter a country and sector</h3>
+<h3>Please choose a country and sector</h3>
 
 {% with messages = get_flashed_messages() %}
 {% if messages %}
@@ -17,10 +17,10 @@
 {% endwith %}
 
 <form action="" method="post" name="countrysector">
-    {{form.hidden_tag()}}
+    {{form.hidden_tag()}} <!-- for CSRF -->
     <p>
-        Country: {{form.country(size=50)}}<br>
-        Sector: {{form.sector(size=50)}}<br>
+        Country: {{form.country}}
+        Sector: {{form.sector}}
     </p>
     <p>
         <input type="submit" value="Submit"/>
