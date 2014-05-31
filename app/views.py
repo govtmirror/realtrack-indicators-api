@@ -32,16 +32,16 @@ def close_connection(exception):
 def index():
     form = IndicatorForm(request.form)
     countrylist = []
-    for country in query_db("select distinct post from indicators"):
+    for country in query_db("select distinct post from indicators order by post"):
         countrylist.append((country[0],country[0]))
-    sectorlist = []
-    for sector in query_db("select distinct project from indicators where post = ?",['Thailand']):
-        sectorlist.append((sector[0],sector[0]))
-
     form.country.choices = countrylist
+
+    sectorlist = []
+    for sector in query_db("select distinct project from indicators where post = ? order by project",[countrylist[0][0]]):
+        sectorlist.append((sector[0],sector[0]))
     form.sector.choices = sectorlist
 
-    if request.method == 'POST': # and form.validate():
+    if request.method == 'POST':
         flash('You chose country = ' + form.country.data + ', sector = ' + form.sector.data)
         return redirect('/index')
 
