@@ -27,4 +27,21 @@
     </p>
 </form>
 
+<script type=text/javascript>
+  $(function() {
+    $('select#country').bind('click', function() {
+      $.getJSON($SCRIPT_ROOT + '/updatesectors', {
+        country: $(this).val(),
+      }, function(data) {
+        /* update sector when country changes */
+        $('select#sector').empty();
+        $.each(data["options"], function(i, value) {
+          $('select#sector').append($('<option>').text(value).attr('value', value));
+        });
+      });
+      return false;
+    });
+  });
+</script>
+
 {% endblock %}
