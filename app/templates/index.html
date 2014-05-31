@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Please enter a country and sector</h3>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <hr>
+  <ul>
+      {% for message in messages %}
+        <li>{{message}}</li>
+      {% endfor %}
+  </ul>
+  <hr>
+{% endif %}
+{% endwith %}
+
+<form action="" method="post" name="countrysector">
+    {{form.hidden_tag()}}
+    <p>
+        Country: {{form.country(size=50)}}<br>
+        Sector: {{form.sector(size=50)}}<br>
+    </p>
+    <p>
+        <input type="submit" value="Submit"/>
+    </p>
+</form>
+
+{% endblock %}
