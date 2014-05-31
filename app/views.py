@@ -39,9 +39,9 @@ def index():
         return redirect('/index')
     return render_template('index.html',title='Home',form=form)
 
-@app.route("/updatesectors") #, methods = ['POST'])
+@app.route("/updatesectors", methods = ['POST'])
 def updatesectors():
-    country = request.args.get('country', 'Thailand')
+    country = request.form['country']
     print country
     sectorlist = []
     for sector in query_db("select distinct project from indicators where post = ? order by project",[country]):
