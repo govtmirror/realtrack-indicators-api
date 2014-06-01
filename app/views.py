@@ -1,7 +1,7 @@
 import sqlite3
 from app import app
 from forms import IndicatorForm
-from flask import render_template, flash, redirect, _app_ctx_stack, request, jsonify
+from flask import render_template, flash, redirect, _app_ctx_stack, request, jsonify, url_for, json
 import os
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -20,6 +20,16 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
+@app.route("/indicators", methods = ['GET','POST'])
+def indicators():
+    country = request.args.get('country')
+    sector = request.args.get('sector')
+    indicatorlist = []
+    for indic in query_db("select * from indicators where post = ? and project = ?",[country, sector]):
+        indicatorlist.append(json.dumps({'post':indic[0],'project':indic[2],'goal':indic[3],'objective':indic[4],'indicator':indic[5]}))
+
+    return render_template('indicators.html',country=country,sector=sector,indicatorlist=indicatorlist)
+
 @app.route("/")
 @app.route("/index", methods = ['GET','POST'])
 def index():
@@ -35,8 +45,7 @@ def index():
     form.sector.choices = sectorlist
 
     if request.method == 'POST':
-        flash('You chose country = ' + form.country.data + ', sector = ' + form.sector.data)
-        return redirect('/index')
+        return redirect(url_for('indicators', country=form.country.data, sector=form.sector.data))
     return render_template('index.html',title='Home',form=form)
 
 @app.route("/updatesectors", methods = ['POST'])

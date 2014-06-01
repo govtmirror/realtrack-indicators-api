@@ -16,7 +16,7 @@
 {% endif %}
 {% endwith %}
 
-<form action="" method="post" name="countrysector">
+<form action="/index" method="post" name="countrysector">
     {{form.hidden_tag()}} <!-- for CSRF -->
     <p>
         Country: {{form.country}}
