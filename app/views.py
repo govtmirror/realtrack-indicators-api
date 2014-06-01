@@ -22,13 +22,13 @@ def query_db(query, args=(), one=False):
 
 @app.route("/indicators", methods = ['GET','POST'])
 def indicators():
+    project = request.args.get('project')
     country = request.args.get('country')
-    sector = request.args.get('sector')
     indicatorlist = []
-    for indic in query_db("select * from indicators where post = ? and project = ?",[country, sector]):
-        indicatorlist.append(json.dumps({'post':indic[0],'project':indic[2],'goal':indic[3],'objective':indic[4],'indicator':indic[5]}))
+    for indic in query_db("select * from indicators where post = ? and project = ?",[country, project]):
+        indicatorlist.append(json.dumps({'post':indic[0],'project':indic[2],'goal':indic[3],'objective':indic[4],'indicator':indic[5]},encoding="utf-8"))
 
-    return render_template('indicators.html',country=country,sector=sector,indicatorlist=indicatorlist)
+    return render_template('indicators.html',country=country,project=project,indicatorlist=indicatorlist)
 
 @app.route("/")
 @app.route("/index", methods = ['GET','POST'])
@@ -39,23 +39,22 @@ def index():
         countrylist.append((country[0],country[0]))
     form.country.choices = countrylist
 
-    sectorlist = []
-    for sector in query_db("select distinct project from indicators where post = ? order by project",[countrylist[0][0]]):
-        sectorlist.append((sector[0],sector[0]))
-    form.sector.choices = sectorlist
+    projectlist = []
+    for project in query_db("select distinct project from indicators where post = ? order by project",[countrylist[0][0]]):
+        projectlist.append((project[0],project[0]))
+    form.project.choices = projectlist
 
     if request.method == 'POST':
-        return redirect(url_for('indicators', country=form.country.data, sector=form.sector.data))
+        return redirect(url_for('indicators', country=form.country.data, project=form.project.data))
     return render_template('index.html',title='Home',form=form)
 
-@app.route("/updatesectors", methods = ['POST'])
-def updatesectors():
+@app.route("/updateprojects", methods = ['POST'])
+def updateprojects():
     country = request.form['country']
-    print country
-    sectorlist = []
-    for sector in query_db("select distinct project from indicators where post = ? order by project",[country]):
-        sectorlist.append(sector[0])
-    return jsonify({'options': sectorlist})
+    projectlist = []
+    for project in query_db("select distinct project from indicators where post = ? order by project",[country]):
+        projectlist.append(project[0])
+    return jsonify({'options': projectlist})
 
 @app.teardown_appcontext
 def close_connection(exception):

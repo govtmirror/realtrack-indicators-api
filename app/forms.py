@@ -3,4 +3,4 @@ from wtforms import SelectField
 
 class IndicatorForm(Form):
     country = SelectField('country')
-    sector = SelectField('sector')
+    project = SelectField('project')

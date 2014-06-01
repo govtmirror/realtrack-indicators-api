@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h3>Please choose a country and sector</h3>
+<h3>Please choose a country and project</h3>
 
 {% with messages = get_flashed_messages() %}
 {% if messages %}
@@ -16,11 +16,11 @@
 {% endif %}
 {% endwith %}
 
-<form action="/index" method="post" name="countrysector">
+<form action="/index" method="post" name="countryproject">
     {{form.hidden_tag()}} <!-- for CSRF -->
     <p>
         Country: {{form.country}}
-        Sector: {{form.sector}}
+        project: {{form.project}}
     </p>
     <p>
         <input type="submit" value="Submit"/>
@@ -30,18 +30,18 @@
 <script type=text/javascript>
   $(function() {
     $('select#country').off('click').on('click', function(){
-        updateSectors($(this).val())
+        updateprojects($(this).val())
     });
 
-    function updateSectors(country){
+    function updateprojects(country){
         $.post(
-            $SCRIPT_ROOT + '/updatesectors',
+            $SCRIPT_ROOT + '/updateprojects',
             {'country': country},
             function(data) {
-                        /* update sector when country changes */
-                        $('select#sector').empty();
+                        /* update project when country changes */
+                        $('select#project').empty();
                         $.each(data["options"], function(i, value) {
-                            $('select#sector').append($('<option>').text(value).attr('value', value));
+                            $('select#project').append($('<option>').text(value).attr('value', value));
                         });
                      },
             'json'
