@@ -1,8 +1,9 @@
 import sqlite3
 from app import app
 from forms import IndicatorForm
-from flask import render_template, flash, redirect, _app_ctx_stack, request, jsonify, url_for, json
+from flask import render_template, flash, redirect, _app_ctx_stack, request, jsonify, url_for, json, send_from_directory
 import os
+from werkzeug.utils import secure_filename
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 DATABASE = os.path.join(PROJECT_ROOT, 'db', 'indicators.sqlite')
@@ -55,6 +56,29 @@ def updateprojects():
     for project in query_db("select distinct project from indicators where post = ? order by project",[country]):
         projectlist.append(project[0])
     return jsonify({'options': projectlist})
+
+@app.route("/uploadxls", methods = ['POST'])
+def uploadXLS():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file', filename=filename))
+
+    flash(u'Invalid filetype. Only XLS or XLSX allowed.','xlsuploaderror')
+    return redirect('/')
+
+# TODO: add radio to choose CSV vs SQLITE
+# TODO: show some kind of progress bar
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.teardown_appcontext
 def close_connection(exception):
