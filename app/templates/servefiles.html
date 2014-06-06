@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Your files are ready</h3>
+
+<p>
+    <a href='/download/{{csvfilename}}'>Download CSV</a>
+</p>
+
+<p>
+    <a href='/download/{{sqlitefilename}}'>Download SQLite</a>
+</p>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% with errors = get_flashed_messages(category_filter=["conversionerror"]) %}
+{% if errors %}
+    {%- for msg in errors %}
+        <p class=error><strong>Error:</strong> {{ msg }} </p>
+    {% endfor -%}
+{% endif %}
+{% endwith %}
+
+<h3>Upload an XLS/XLSX for conversion to CSV and SQLite</h3>
+
+{% with errors = get_flashed_messages(category_filter=["xlsuploaderror"]) %}
+{% if errors %}
+    <ul>
+        {%- for msg in errors %}
+        <li class=error><strong>Error:</strong> {{ msg }} </li>
+        {% endfor -%}
+    </ul>
+{% endif %}
+{% endwith %}
+
+<form action="/uploadxls" method=post enctype=multipart/form-data>
+    <p>
+        <input type=file name=file>
+    </p>
+    <p>
+        <input type=submit value=Upload>
+    </p>
+</form>
+
+{% endblock %}

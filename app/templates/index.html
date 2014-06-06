@@ -2,63 +2,8 @@
 
 {% block content %}
 
-<h3>Upload an XLS/XLSX for conversion</h3>
+<h3><a href='/upload'>Convert XLS/XLSX to CSV or SQLite</a></h3>
 
-{% with errors = get_flashed_messages(category_filter=["xlsuploaderror"]) %}
-{% if errors %}
-    <ul>
-        {%- for msg in errors %}
-        <li class=error><strong>Error:</strong> {{ msg }} </li>
-        {% endfor -%}
-    </ul>
-{% endif %}
-{% endwith %}
-<form action="/uploadxls" method=post enctype=multipart/form-data>
-    {{form.hidden_tag()}} <!-- for CSRF -->
-    <p>
-        <input type=file name=file>
-    </p>
-    <p>
-        <input type=submit value=Upload>
-    </p>
-</form>
-
-<h3>Please choose a country and project</h3>
-
-<form action="/index" method="post">
-    {{form.hidden_tag()}} <!-- for CSRF -->
-    <p>
-        Country: {{form.country}}
-        project: {{form.project}}
-    </p>
-    <p>
-        <input type="submit" value="Submit"/>
-    </p>
-</form>
-
-<script type=text/javascript>
-  $(function() {
-    $('select#country').off('click').on('click', function(){
-        updateprojects($(this).val())
-    });
-
-    function updateprojects(country){
-        $.post(
-            $SCRIPT_ROOT + '/updateprojects',
-            {'country': country},
-            function(data) {
-                        /* update project when country changes */
-                        $('select#project').empty();
-                        $.each(data["options"], function(i, value) {
-                            $('select#project').append($('<option>').text(value).attr('value', value));
-                        });
-                     },
-            'json'
-        );
-        return false;
-    };
-
-  });
-</script>
+<h3><a href='/apidemo'>See RealTrack REST API Demo</a></h3>
 
 {% endblock %}

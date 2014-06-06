@@ -4,10 +4,10 @@ import csv
 import sqlite3
 import os
 
-def xls2csv(inFileName, outCSVFileName):
-    wb = xlrd.open_workbook(inFileName)
+def xls2csv(infilename, outcsvfilename):
+    wb = xlrd.open_workbook(infilename)
     sh = wb.sheet_by_index(1)
-    csv_output = open(outCSVFileName, 'wb')
+    csv_output = open(outcsvfilename, 'wb')
     wr = csv.writer(csv_output, quoting=csv.QUOTE_MINIMAL)
     requiredCols = [0,2,3,4,5,6,8]
 
@@ -17,12 +17,12 @@ def xls2csv(inFileName, outCSVFileName):
 
     csv_output.close()
 
-def csv2sqlite(outSQLiteFileName):
-    con = sqlite3.connect(outSQLiteFileName)
+def csv2sqlite(incsvfilename, outsqlitefilename):
+    con = sqlite3.connect(outsqlitefilename)
     cur = con.cursor()
     cur.execute('CREATE TABLE "indicators" ("post"  NOT NULL , "sector"  NOT NULL , "project"  NOT NULL , "goal"  NOT NULL , "objective"  NOT NULL , "indicator"  NOT NULL, "type" NOT NULL)')
 
-    dr = csv.reader(open('test.csv', 'rb'), delimiter=',')
+    dr = csv.reader(open(incsvfilename, 'rb'), delimiter=',')
     for row in dr:
         to_db = [unicode(elem,"utf8") for elem in row]
         cur.execute("INSERT INTO indicators (post, sector, project, goal, objective, indicator, type) VALUES (?, ?, ?, ?, ?, ?, ?);", to_db)
@@ -30,8 +30,7 @@ def csv2sqlite(outSQLiteFileName):
     con.commit()
 
 if __name__ == '__main__':
-    inFileName = "test.xlsx"
-    outCSVFileName = '%s.csv' % os.path.splitext(inFileName)[0]
-    xls2csv(inFileName, outCSVFileName)
-    outSQLiteFileName = '%s.sqlite' % os.path.splitext(inFileName)[0]
-    csv2sqlite(outSQLiteFileName)
+    outcsvfilename = '%s.csv' % os.path.splitext(infilename)[0]
+    xls2csv(infilename, outcsvfilename)
+    outsqlitefilename = '%s.sqlite' % os.path.splitext(infilename)[0]
+    csv2sqlite(outcsvfilename, outsqlitefilename)

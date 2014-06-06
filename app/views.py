@@ -4,6 +4,8 @@ from forms import IndicatorForm
 from flask import render_template, flash, redirect, _app_ctx_stack, request, jsonify, url_for, json, send_from_directory
 import os
 from werkzeug.utils import secure_filename
+import xls2csv
+import uuid
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 DATABASE = os.path.join(PROJECT_ROOT, 'db', 'indicators.sqlite')
@@ -34,6 +36,10 @@ def indicators():
 @app.route("/")
 @app.route("/index", methods = ['GET','POST'])
 def index():
+    return render_template("index.html", title='Home')
+
+@app.route("/apidemo", methods = ['GET','POST'])
+def apidemo():
     form = IndicatorForm(request.form)
     countrylist = []
     for country in query_db("select distinct post from indicators order by post"):
@@ -47,8 +53,10 @@ def index():
 
     if request.method == 'POST':
         return redirect(url_for('indicators', country=form.country.data, project=form.project.data))
-    return render_template('index.html',title='Home',form=form)
 
+    return render_template('apidemo.html',title='REST API demo',form=form)
+
+# callback for Javascript
 @app.route("/updateprojects", methods = ['POST'])
 def updateprojects():
     country = request.form['country']
@@ -57,17 +65,28 @@ def updateprojects():
         projectlist.append(project[0])
     return jsonify({'options': projectlist})
 
+@app.route("/upload", methods = ['GET'])
+def upload():
+    return render_template("upload.html", title='Upload spreadsheet')
+
 @app.route("/uploadxls", methods = ['POST'])
 def uploadXLS():
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file', filename=filename))
+            filename = os.path.splitext(secure_filename(file.filename))[0]
+            random_uuid = uuid.uuid4()
+            path = os.path.join(app.config['UPLOAD_FOLDER'], str(random_uuid))
+            if not os.path.exists(path): os.makedirs(path)
+            genfile = os.path.join(path, filename)
+            file.save(genfile)
+
+            convert_file(genfile)
+
+            return redirect(url_for('servefiles', uuid=random_uuid, filename=filename))
 
     flash(u'Invalid filetype. Only XLS or XLSX allowed.','xlsuploaderror')
-    return redirect('/')
+    return redirect('/upload')
 
 # TODO: add radio to choose CSV vs SQLITE
 # TODO: show some kind of progress bar
@@ -76,9 +95,27 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+def convert_file(filename):
+    outcsvfilename = '%s.csv' % filename
+    xls2csv.xls2csv(filename, outcsvfilename)
+    outsqlitefilename = '%s.sqlite' % filename
+    xls2csv.csv2sqlite(outcsvfilename, outsqlitefilename)
+
+@app.route("/servefiles/<uuid>/<filename>", methods = ['GET','POST'])
+def servefiles(uuid, filename):
+    csvfilename = os.path.join(uuid, '%s.csv' % filename)
+    sqlitefilename = os.path.join(uuid, '%s.sqlite' % filename)
+    return render_template("servefiles.html", csvfilename=csvfilename, sqlitefilename=sqlitefilename)
+
+@app.route("/download/<uuid>/<filename>")
+def downloadfile(uuid, filename):
+    directory = os.path.join(app.config['UPLOAD_FOLDER'], uuid)
+    if not os.path.exists(directory):
+        flash(u'Sorry, the requested file was not found. Please upload your spreadsheet again.','conversionerror')
+        return redirect('/upload')
+
+    filename = os.path.join(uuid, filename)
+    return send_from_directory(directory=app.config['UPLOAD_FOLDER'], filename=filename, as_attachment=True)
 
 @app.teardown_appcontext
 def close_connection(exception):

@@ -1,4 +1,4 @@
-li.error {
+p.error, li.error {
     color: red;
     font-weight: bold;
 }
