@@ -2,43 +2,36 @@
 
 {% block content %}
 
-<h3>Please choose a country and project</h3>
-
-<form action="/apidemo" method="post">
+<form class="form" action="/apidemo" method="post">
+    <h4 class="form-heading">Choose a country and project</h4>
     {{form.hidden_tag()}} <!-- for CSRF -->
     <p>
         Country: {{form.country}}
-        project: {{form.project}}
     </p>
     <p>
-        <input type="submit" value="Submit"/>
+        Project: {{form.project}}
+    </p>
+    <p>
+        <button class="btn btn-primary" type="submit" data-toggle="modal" data-target="div#progress-modal">Submit</button>
     </p>
 </form>
 
-<script type=text/javascript>
-  $(function() {
-    $('select#country').off('click').on('click', function(){
-        updateprojects($(this).val())
-    });
+<div id="progress-modal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Fetching indicators...</h4>
+        </div>
+        <div class="modal-body">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" style="width: 100%"/>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
 
-    function updateprojects(country){
-        $.post(
-            $SCRIPT_ROOT + '/updateprojects',
-            {'country': country},
-            function(data) {
-                        /* update project when country changes */
-                        $('select#project').empty();
-                        $.each(data["options"], function(i, value) {
-                            $('select#project').append($('<option>').text(value).attr('value', value));
-                        });
-                     },
-            'json'
-        );
-        return false;
-    };
-
-  });
-</script>
+<script src="../static/js/apidemo.js"></script>
 
 {% endblock %}
 

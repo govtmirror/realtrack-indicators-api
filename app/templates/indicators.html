@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h3>Country {{country}}, Project {{project}}</h3>
-
-{{indicatorlist}}
+<h4>Country: {{country}}</h4>
+<h4>Project: {{project}}</h4>
+<h4>API Response:</h4>
+<div id="apiresponse">
+    {{result}}
+</div>
 
 {% endblock %}

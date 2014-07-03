@@ -23,15 +23,34 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-@app.route("/indicators", methods = ['GET','POST'])
+@app.route("/indicators", methods = ['GET'])
 def indicators():
     project = request.args.get('project')
     country = request.args.get('country')
+
+    if not(project and country):
+        result = json.dumps({
+                'success': False,
+                'error': app.config['MSG_MISSING_PARAM']
+        }, encoding="utf-8")
+        return render_template('indicators.html',result=result)
+
     indicatorlist = []
     for indic in query_db("select * from indicators where post = ? and project = ?",[country, project]):
-        indicatorlist.append(json.dumps({'post':indic[0],'project':indic[2],'goal':indic[3],'objective':indic[4],'indicator':indic[5]},encoding="utf-8"))
+        indicatorlist.append({'post': indic[0], 'project': indic[2], 'goal': indic[3], 'objective': indic[4], 'indicator': indic[5]})
 
-    return render_template('indicators.html',country=country,project=project,indicatorlist=indicatorlist)
+    if len(indicatorlist) == 0:
+        result = json.dumps({
+                'success': False,
+                'error': app.config['MSG_INVALID_COUNTRY_PROJECT_COMBINATION']
+        }, encoding="utf-8")
+    else:
+        result = json.dumps({
+                'success': True,
+                'indicatorlist': indicatorlist
+        }, encoding="utf-8")
+
+    return render_template('indicators.html',country=country,project=project,result=result)
 
 @app.route("/")
 @app.route("/index", methods = ['GET','POST'])

@@ -1,18 +1,45 @@
 <html>
     <head>
         <title>{{title}}</title>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-        <link rel="stylesheet" href="../static/style.css" type="text/css" />
-    </head>
-    <div><a href="/index">Home</a></div>
-    <body>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{{
-          url_for('static', filename='jquery-1.11.1.min.js') }}">\x3C/script>')</script>
-        <script type=text/javascript>
-          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-        </script>
-        {% block content %}
-        {% endblock %}
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="../static/js/base.js"></script>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../static/css/style.css">
+    </head>
+    <body>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Realtrack Demo API</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/apidemo">API Demo</a></li>
+                        <li><a href="/upload">File Conversion</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+        <div class="container">
+            <div class="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <script type="text/javascript">
+                $SCRIPT_ROOT = "";
+            </script>
+        </div>
     </body>
 </html>

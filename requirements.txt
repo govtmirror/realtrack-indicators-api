@@ -1,0 +1,4 @@
+Flask==0.10.1
+Flask-UUID==0.2
+Flask-WTF==0.9.5
+xlrd==0.9.3

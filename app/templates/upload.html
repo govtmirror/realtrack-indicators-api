@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 {% with errors = get_flashed_messages(category_filter=["conversionerror"]) %}
 {% if errors %}
     {%- for msg in errors %}
@@ -8,8 +9,6 @@
     {% endfor -%}
 {% endif %}
 {% endwith %}
-
-<h3>Upload an XLS/XLSX for conversion to CSV and SQLite</h3>
 
 {% with errors = get_flashed_messages(category_filter=["xlsuploaderror"]) %}
 {% if errors %}
@@ -21,13 +20,31 @@
 {% endif %}
 {% endwith %}
 
-<form action="/uploadxls" method=post enctype=multipart/form-data>
+<form class="form" action="/uploadxls" method=post enctype=multipart/form-data>
+    <h4 class="form-heading">Upload an XLS/XLSX for conversion to CSV and SQLite</h4>
     <p>
-        <input type=file name=file>
+        <span class="btn btn-default btn-file">
+            Choose File <input type=file name=file>
+        </span>
     </p>
     <p>
-        <input type=submit value=Upload>
+        <button type=submit class="btn btn-primary" data-toggle="modal" data-target="div#progress-modal">Upload</button>
     </p>
 </form>
+
+<div id="progress-modal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">File conversion in progress...</h4>
+        </div>
+        <div class="modal-body">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" style="width: 100%"/>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
