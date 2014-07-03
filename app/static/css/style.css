@@ -26,7 +26,6 @@ body {
 }
 
 .navbar-default .navbar-nav > li > a {
-  font-size: 18px;
   color: #ffffff;
 }
 
@@ -90,7 +89,7 @@ div#apiresponse{
     text-align: justify;
 }
 
-p.error, li.error {
+p.text-error {
     color: red;
     font-weight: bold;
 }
@@ -109,6 +108,7 @@ p.error, li.error {
     position: relative;
     overflow: hidden;
 }
+
 .btn-file input[type=file] {
     position: absolute;
     top: 0;
@@ -123,4 +123,8 @@ p.error, li.error {
     background: white;
     cursor: inherit;
     display: block;
+}
+
+span#selected-file-name{
+    padding: 10px;
 }
