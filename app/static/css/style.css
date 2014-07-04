@@ -95,7 +95,7 @@ p.text-error {
 }
 
 .form {
-  max-width: 500px;
+  max-width: 400px;
   padding: 15px;
   margin: 0 auto;
 }
@@ -127,4 +127,8 @@ p.text-error {
 
 span#selected-file-name{
     padding: 10px;
+}
+
+select#project, select#country {
+    width: 100%;
 }

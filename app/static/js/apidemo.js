@@ -1,11 +1,11 @@
 $(function() {
-    $('select#country').off('click').on('click', function(){
+    $('select#country').change(function(){
         updateprojects($(this).val())
     });
 
     function updateprojects(country){
         $.post(
-            $SCRIPT_ROOT + '/updateprojects',
+            '/updateprojects',
             {'country': country},
             function(data) {
                         /* update project when country changes */
